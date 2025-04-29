@@ -14,6 +14,11 @@ const TransactionSchema: Schema = new Schema(
       enum: CATEGORIES,
       default: 'Other',
     },
+    type: {
+      type: String,
+      enum: ['income', 'expense'],
+      required: false, // Optional, as per ITransaction
+    },
   },
   { timestamps: true }
 );

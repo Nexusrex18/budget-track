@@ -1,15 +1,12 @@
 import mongoose from 'mongoose';
 
-// Declare the global mongoose property to avoid TypeScript errors
+// Updated global type declaration for modern TypeScript
 declare global {
-  namespace NodeJS {
-    interface Global {
-      mongoose: {
-        conn: mongoose.Mongoose | null;
-        promise: Promise<mongoose.Mongoose> | null;
-      };
-    }
-  }
+  // eslint-disable-next-line no-var
+  var mongoose: {
+    conn: mongoose.Connection | null;
+    promise: Promise<mongoose.Connection> | null;
+  };
 }
 
 const MONGODB_URI = process.env.NEXT_MONGODB_URI || 'mongodb://localhost:27017/fintrack';
@@ -29,7 +26,7 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function dbConnect(): Promise<mongoose.Mongoose> {
+async function dbConnect(): Promise<mongoose.Connection> {
   if (cached.conn) {
     return cached.conn;
   }
@@ -41,7 +38,7 @@ async function dbConnect(): Promise<mongoose.Mongoose> {
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log('MongoDB connected successfully');
-      return mongoose;
+      return mongoose.connection;
     }).catch((error) => {
       console.error('MongoDB connection error:', error);
       throw error;
